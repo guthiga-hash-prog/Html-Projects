@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WiFi Login Subscription</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0716ebe5;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background: #0ddb3a;
+      color: rgb(30, 73, 212);
+      padding: 20px;
+    }
+
+    .packages {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 20px;
+      gap: 20px;
+    }
+
+    .package {
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 20px;
+      width: 250px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    input[type="tel"] {
+      width: 90%;
+      padding: 8px;
+      margin: 10px 0;
+    }
+
+    button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #218838;
+    }
+
+    @media (max-width: 600px) {
+      .package {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to Jst_morgan Networks</h1>
+    <p>Select your preferred package below</p>
+  </header>
+
+  <section class="packages" id="packageContainer"></section>
+
+  <footer>
+    <p>By subscribing you agree to our <a href="#">Terms & Conditions</a>.</p>
+  </footer>
+
+  <script>
+    const packages = [
+      { name: "Saa Mbili UNLIMITED", duration: "2hrs", price: 40 },
+      { name: "Saa Nne UNLIMITED", duration: "4hrs", price: 80 },
+      { name: "Saa Nane UNLIMITED", duration: "8hrs", price: 150 },
+      { name: "Siku Moja UNLIMITED", duration: "1d", price: 200 },
+      { name: "Siku Tatu UNLIMITED", duration: "3d", price: 300 },
+      { name: "Wiki Moja UNLIMITED", duration: "1wk", price: 200 },
+      { name: "Wiki Mbili UNLIMITED", duration: "2wks", price: 250 },
+      { name: "Mwezi Moja UNLIMITED", duration: "1m", price: 500 }
+    ];
+
+    const container = document.getElementById("packageContainer");
+
+    packages.forEach(pkg => {
+      const div = document.createElement("div");
+      div.className = "package";
+      div.innerHTML = `
+        <h2>${pkg.name}</h2>
+        <p>${pkg.duration} @ Ksh ${pkg.price}</p>
+        <input type="tel" placeholder="Enter your phone number">
+        <button onclick="subscribe('${pkg.duration}', ${pkg.price}, this)">Subscribe Now</button>
+      `;
+      container.appendChild(div);
+    });
+
+    function subscribe(duration, price, button) {
+      const phoneInput = button.previousElementSibling;
+      const phoneNumber = phoneInput.value.trim();
+
+      if (!/^\d{10}$/.test(phoneNumber)) {
+        alert("Enter a valid 10-digit Kenyan phone number.");
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Processing...";
+
+      fetch("http://localhost:3000/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber, duration, price })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Subscription successful!");
+        button.textContent = "Subscribed";
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Something went wrong. Try again.");
+        button.disabled = false;
+        button.textContent = "Subscribe Now";
+      });
+    }
+  </script>
+</body>
+</html>
