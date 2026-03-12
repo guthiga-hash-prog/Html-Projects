@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PIN Access</title>
+</head>
+<body>
+
+<script>
+const correctPin = "0164"; // the PIN to check
+let attemptsLeft = 3;       // number of allowed attempts
+let userPin = "";           // variable to store user's input
+
+while (attemptsLeft > 0) {
+    userPin = prompt("Enter your PIN. Attempts left: " + attemptsLeft);
+
+    if (userPin === correctPin) {
+        alert("Access granted! ✅");
+        break; // exit the loop if correct
+    } else {
+        attemptsLeft--; // reduce attempts
+        alert("Incorrect PIN! ❌");
+    }
+
+    if (attemptsLeft === 0) {
+        alert("No attempts left. Access denied! ⛔");
+    }
+}
+</script>
+
+</body>
+</html>
